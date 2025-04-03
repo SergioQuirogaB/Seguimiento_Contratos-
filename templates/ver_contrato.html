@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Contrato</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+    </style>
+</head>
+<body class="p-6">
+    <div class="container mx-auto">
+        <div class="glass-effect rounded-xl p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-2xl font-bold">Detalles del Contrato</h1>
+                <div class="space-x-2">
+                    <button onclick="toggleEdit()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        Editar
+                    </button>
+                    <a href="{{ url_for('index') }}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                        Volver
+                    </a>
+                </div>
+            </div>
+
+            <form id="editForm" action="{{ url_for('editar_contrato', id=id) }}" method="POST">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block font-bold mb-1">Año:</label>
+                            <input type="number" name="año" value="{{ contrato.año }}" class="w-full p-2 border rounded" disabled>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Empresa:</label>
+                            <select name="empresa" class="w-full p-2 border rounded" disabled>
+                                {% for empresa in ["SKIT", "KONCILIA"] %}
+                                <option value="{{ empresa }}" {% if contrato.empresa == empresa %}selected{% endif %}>{{ empresa }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Cliente:</label>
+                            <input type="text" name="cliente" value="{{ contrato.cliente }}" class="w-full p-2 border rounded" disabled>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Contrato:</label>
+                            <input type="text" name="contrato" value="{{ contrato.contrato }}" class="w-full p-2 border rounded" disabled>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Valor en Pesos:</label>
+                            <input type="number" name="valor_pesos" value="{{ contrato.valor_pesos }}" class="w-full p-2 border rounded" step="0.01" disabled>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Valor en Dólares:</label>
+                            <input type="number" name="valor_dolares" value="{{ contrato.valor_dolares }}" class="w-full p-2 border rounded" step="0.01" disabled>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Descripción:</label>
+                            <textarea name="descripcion" class="w-full p-2 border rounded" disabled>{{ contrato.descripcion }}</textarea>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Categoría:</label>
+                            <input type="text" name="categoria" value="{{ contrato.categoria }}" class="w-full p-2 border rounded" disabled>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Valor Mensual:</label>
+                            <input type="number" name="valor_mensual" value="{{ contrato.valor_mensual }}" class="w-full p-2 border rounded" step="0.01" disabled>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Condiciones:</label>
+                            <textarea name="condiciones" class="w-full p-2 border rounded" disabled>{{ contrato.condiciones }}</textarea>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block font-bold mb-1">Fecha de Inicio:</label>
+                            <input type="date" name="fecha_inicio" value="{{ contrato.fecha_inicio }}" class="w-full p-2 border rounded" disabled>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Fecha de Vencimiento:</label>
+                            <input type="date" name="fecha_vencimiento" value="{{ contrato.fecha_vencimiento }}" class="w-full p-2 border rounded" disabled>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Valor Facturado:</label>
+                            <input type="number" name="valor_facturado" value="{{ contrato.valor_facturado }}" class="w-full p-2 border rounded" step="0.01" disabled>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Valor Pendiente:</label>
+                            <input type="number" name="valor_pendiente" value="{{ contrato.valor_pendiente }}" class="w-full p-2 border rounded" step="0.01" disabled>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Estado:</label>
+                            <select name="estado" class="w-full p-2 border rounded" disabled>
+                                <option value="100%" {% if contrato.estado == "100%" %}selected{% endif %}>100%</option>
+                                <option value="progreso" {% if contrato.estado == "progreso" %}selected{% endif %}>En Progreso</option>
+                                <option value="blanco" {% if contrato.estado == "blanco" %}selected{% endif %}>En Blanco</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Número de Factura:</label>
+                            <input type="text" name="numero_factura" value="{{ contrato.numero_factura }}" class="w-full p-2 border rounded" disabled>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Número de Póliza:</label>
+                            <input type="text" name="numero_poliza" value="{{ contrato.numero_poliza }}" class="w-full p-2 border rounded" disabled>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Fecha Vencimiento Póliza:</label>
+                            <input type="date" name="fecha_vencimiento_poliza" value="{{ contrato.fecha_vencimiento_poliza }}" class="w-full p-2 border rounded" disabled>
+                        </div>
+                        <div>
+                            <label class="block font-bold mb-1">Comentario Póliza:</label>
+                            <textarea name="comentario_poliza" class="w-full p-2 border rounded" disabled>{{ contrato.comentario_poliza }}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div id="saveButton" class="mt-6 text-center hidden">
+                    <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
+                        Guardar Cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleEdit() {
+            const form = document.getElementById('editForm');
+            const inputs = form.querySelectorAll('input, textarea, select');
+            const saveButton = document.getElementById('saveButton');
+            
+            inputs.forEach(input => {
+                input.disabled = !input.disabled;
+            });
+            
+            saveButton.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
