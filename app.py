@@ -84,11 +84,14 @@ def index():
             'categoria': request.form['categoria'],
             'valor_mensual': float(request.form['valor_mensual'] or 0),
             'condiciones': request.form['condiciones'],
+            'observaciones': request.form['observaciones'],  # New field
             'fecha_inicio': request.form['fecha_inicio'],
             'fecha_vencimiento': request.form['fecha_vencimiento'],
             'valor_facturado': float(request.form['valor_facturado'] or 0),
+            'porcentaje_ejecucion': float(request.form['porcentaje_ejecucion'] or 0),  # New field
             'valor_pendiente': float(request.form['valor_pendiente'] or 0),
             'estado': request.form['estado'],
+            'numero_horas': float(request.form['numero_horas'] or 0),  # New field
             'numero_factura': request.form['numero_factura'],
             'numero_poliza': request.form['numero_poliza'],
             'fecha_vencimiento_poliza': request.form['fecha_vencimiento_poliza'],
@@ -156,11 +159,14 @@ def editar_contrato(id):
             'categoria': request.form['categoria'],
             'valor_mensual': float(request.form['valor_mensual'] or 0),
             'condiciones': request.form['condiciones'],
+            'observaciones': request.form['observaciones'],  # New field
             'fecha_inicio': request.form['fecha_inicio'],
             'fecha_vencimiento': request.form['fecha_vencimiento'],
             'valor_facturado': float(request.form['valor_facturado'] or 0),
+            'porcentaje_ejecucion': float(request.form['porcentaje_ejecucion'] or 0),  # New field
             'valor_pendiente': float(request.form['valor_pendiente'] or 0),
             'estado': request.form['estado'],
+            'numero_horas': float(request.form['numero_horas'] or 0),  # New field
             'numero_factura': request.form['numero_factura'],
             'numero_poliza': request.form['numero_poliza'],
             'fecha_vencimiento_poliza': request.form['fecha_vencimiento_poliza'],

@@ -26,9 +26,6 @@
             <div class="flex justify-between items-center mb-6">
                 <h1 class="text-2xl font-bold">Detalles del Contrato</h1>
                 <div class="space-x-2">
-                    <button onclick="toggleEdit()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                        Editar
-                    </button>
                     <a href="{{ url_for('index') }}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
                         Volver
                     </a>
@@ -40,11 +37,11 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block font-bold mb-1">Año:</label>
-                            <input type="number" name="año" value="{{ contrato.año }}" class="w-full p-2 border rounded" disabled>
+                            <input type="number" name="año" value="{{ contrato.año }}" class="w-full p-2 border rounded">
                         </div>
                         <div>
                             <label class="block font-bold mb-1">Empresa:</label>
-                            <select name="empresa" class="w-full p-2 border rounded" disabled>
+                            <select name="empresa" class="w-full p-2 border rounded">
                                 {% for empresa in ["SKIT", "KONCILIA"] %}
                                 <option value="{{ empresa }}" {% if contrato.empresa == empresa %}selected{% endif %}>{{ empresa }}</option>
                                 {% endfor %}
@@ -52,101 +49,102 @@
                         </div>
                         <div>
                             <label class="block font-bold mb-1">Cliente:</label>
-                            <input type="text" name="cliente" value="{{ contrato.cliente }}" class="w-full p-2 border rounded" disabled>
+                            <input type="text" name="cliente" value="{{ contrato.cliente }}" class="w-full p-2 border rounded">
                         </div>
                         <div>
                             <label class="block font-bold mb-1">Contrato:</label>
-                            <input type="text" name="contrato" value="{{ contrato.contrato }}" class="w-full p-2 border rounded" disabled>
+                            <input type="text" name="contrato" value="{{ contrato.contrato }}" class="w-full p-2 border rounded">
                         </div>
                         <div>
                             <label class="block font-bold mb-1">Valor en Pesos:</label>
-                            <input type="number" name="valor_pesos" value="{{ contrato.valor_pesos }}" class="w-full p-2 border rounded" step="0.01" disabled>
+                            <input type="number" name="valor_pesos" value="{{ contrato.valor_pesos }}" class="w-full p-2 border rounded" step="0.01">
                         </div>
                         <div>
                             <label class="block font-bold mb-1">Valor en Dólares:</label>
-                            <input type="number" name="valor_dolares" value="{{ contrato.valor_dolares }}" class="w-full p-2 border rounded" step="0.01" disabled>
+                            <input type="number" name="valor_dolares" value="{{ contrato.valor_dolares }}" class="w-full p-2 border rounded" step="0.01">
                         </div>
                         <div>
                             <label class="block font-bold mb-1">Descripción:</label>
-                            <textarea name="descripcion" class="w-full p-2 border rounded" disabled>{{ contrato.descripcion }}</textarea>
+                            <textarea name="descripcion" class="w-full p-2 border rounded">{{ contrato.descripcion }}</textarea>
                         </div>
                         <div>
                             <label class="block font-bold mb-1">Categoría:</label>
-                            <input type="text" name="categoria" value="{{ contrato.categoria }}" class="w-full p-2 border rounded" disabled>
+                            <input type="text" name="categoria" value="{{ contrato.categoria }}" class="w-full p-2 border rounded">
                         </div>
                         <div>
                             <label class="block font-bold mb-1">Valor Mensual:</label>
-                            <input type="number" name="valor_mensual" value="{{ contrato.valor_mensual }}" class="w-full p-2 border rounded" step="0.01" disabled>
+                            <input type="number" name="valor_mensual" value="{{ contrato.valor_mensual }}" class="w-full p-2 border rounded" step="0.01">
                         </div>
                         <div>
                             <label class="block font-bold mb-1">Condiciones:</label>
-                            <textarea name="condiciones" class="w-full p-2 border rounded" disabled>{{ contrato.condiciones }}</textarea>
+                            <textarea name="condiciones" class="w-full p-2 border rounded">{{ contrato.condiciones }}</textarea>
+                        </div>
+                        <!-- CAMPO NUEVO: Observaciones (después de Condiciones) -->
+                        <div>
+                            <label class="block font-bold mb-1">Observaciones:</label>
+                            <textarea name="observaciones" class="w-full p-2 border rounded">{{ contrato.observaciones }}</textarea>
                         </div>
                     </div>
                     <div class="space-y-4">
                         <div>
                             <label class="block font-bold mb-1">Fecha de Inicio:</label>
-                            <input type="date" name="fecha_inicio" value="{{ contrato.fecha_inicio }}" class="w-full p-2 border rounded" disabled>
+                            <input type="date" name="fecha_inicio" value="{{ contrato.fecha_inicio }}" class="w-full p-2 border rounded">
                         </div>
                         <div>
                             <label class="block font-bold mb-1">Fecha de Vencimiento:</label>
-                            <input type="date" name="fecha_vencimiento" value="{{ contrato.fecha_vencimiento }}" class="w-full p-2 border rounded" disabled>
+                            <input type="date" name="fecha_vencimiento" value="{{ contrato.fecha_vencimiento }}" class="w-full p-2 border rounded">
                         </div>
                         <div>
                             <label class="block font-bold mb-1">Valor Facturado:</label>
-                            <input type="number" name="valor_facturado" value="{{ contrato.valor_facturado }}" class="w-full p-2 border rounded" step="0.01" disabled>
+                            <input type="number" name="valor_facturado" value="{{ contrato.valor_facturado }}" class="w-full p-2 border rounded" step="0.01">
+                        </div>
+                        <!-- CAMPO NUEVO: % de ejecución según la facturación (después de Valor Facturado) -->
+                        <div>
+                            <label class="block font-bold mb-1">% de ejecución según la facturación:</label>
+                            <input type="number" name="porcentaje_ejecucion" value="{{ contrato.porcentaje_ejecucion }}" class="w-full p-2 border rounded" step="0.01" min="0" max="100">
                         </div>
                         <div>
                             <label class="block font-bold mb-1">Valor Pendiente:</label>
-                            <input type="number" name="valor_pendiente" value="{{ contrato.valor_pendiente }}" class="w-full p-2 border rounded" step="0.01" disabled>
+                            <input type="number" name="valor_pendiente" value="{{ contrato.valor_pendiente }}" class="w-full p-2 border rounded" step="0.01">
                         </div>
                         <div>
                             <label class="block font-bold mb-1">Estado:</label>
-                            <select name="estado" class="w-full p-2 border rounded" disabled>
+                            <select name="estado" class="w-full p-2 border rounded">
                                 <option value="100%" {% if contrato.estado == "100%" %}selected{% endif %}>100%</option>
                                 <option value="progreso" {% if contrato.estado == "progreso" %}selected{% endif %}>En Progreso</option>
                                 <option value="blanco" {% if contrato.estado == "blanco" %}selected{% endif %}>En Blanco</option>
                             </select>
                         </div>
+                        <!-- CAMPO NUEVO: Número de horas (después de Estado) -->
+                        <div>
+                            <label class="block font-bold mb-1">Número de horas:</label>
+                            <input type="number" name="numero_horas" value="{{ contrato.numero_horas }}" class="w-full p-2 border rounded" step="0.5">
+                        </div>
                         <div>
                             <label class="block font-bold mb-1">Número de Factura:</label>
-                            <input type="text" name="numero_factura" value="{{ contrato.numero_factura }}" class="w-full p-2 border rounded" disabled>
+                            <input type="text" name="numero_factura" value="{{ contrato.numero_factura }}" class="w-full p-2 border rounded">
                         </div>
                         <div>
                             <label class="block font-bold mb-1">Número de Póliza:</label>
-                            <input type="text" name="numero_poliza" value="{{ contrato.numero_poliza }}" class="w-full p-2 border rounded" disabled>
+                            <input type="text" name="numero_poliza" value="{{ contrato.numero_poliza }}" class="w-full p-2 border rounded">
                         </div>
                         <div>
                             <label class="block font-bold mb-1">Fecha Vencimiento Póliza:</label>
-                            <input type="date" name="fecha_vencimiento_poliza" value="{{ contrato.fecha_vencimiento_poliza }}" class="w-full p-2 border rounded" disabled>
+                            <input type="date" name="fecha_vencimiento_poliza" value="{{ contrato.fecha_vencimiento_poliza }}" class="w-full p-2 border rounded">
                         </div>
                         <div>
                             <label class="block font-bold mb-1">Comentario Póliza:</label>
-                            <textarea name="comentario_poliza" class="w-full p-2 border rounded" disabled>{{ contrato.comentario_poliza }}</textarea>
+                            <textarea name="comentario_poliza" class="w-full p-2 border rounded">{{ contrato.comentario_poliza }}</textarea>
                         </div>
                     </div>
                 </div>
-                <div id="saveButton" class="mt-6 text-center hidden">
+                <div class="mt-6 text-center">
                     <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">
-                        Guardar Cambios
+                        Actualizar
                     </button>
                 </div>
             </form>
         </div>
     </div>
-
-    <script>
-        function toggleEdit() {
-            const form = document.getElementById('editForm');
-            const inputs = form.querySelectorAll('input, textarea, select');
-            const saveButton = document.getElementById('saveButton');
-            
-            inputs.forEach(input => {
-                input.disabled = !input.disabled;
-            });
-            
-            saveButton.classList.toggle('hidden');
-        }
-    </script>
 </body>
 </html>

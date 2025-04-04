@@ -104,6 +104,12 @@
                     <textarea name="condiciones" class="w-full p-2 border rounded"></textarea>
                 </div>
 
+                <!-- CAMPO NUEVO: Observaciones (después de Condiciones) -->
+                <div>
+                    <label class="block mb-2">Observaciones</label>
+                    <textarea name="observaciones" class="w-full p-2 border rounded"></textarea>
+                </div>
+
                 <!-- Fechas -->
                 <div>
                     <label class="block mb-2">Fecha de Inicio</label>
@@ -119,6 +125,13 @@
                     <label class="block mb-2">Valor Facturado</label>
                     <input type="number" name="valor_facturado" class="w-full p-2 border rounded" step="0.01">
                 </div>
+                
+                <!-- CAMPO NUEVO: % de ejecución según la facturación (después de Valor Facturado) -->
+                <div>
+                    <label class="block mb-2">% de ejecución según la facturación</label>
+                    <input type="number" name="porcentaje_ejecucion" class="w-full p-2 border rounded" step="0.01" min="0" max="100">
+                </div>
+                
                 <div>
                     <label class="block mb-2">Valor Pendiente</label>
                     <input type="number" name="valor_pendiente" class="w-full p-2 border rounded" step="0.01">
@@ -133,6 +146,13 @@
                         <option value="blanco">En Blanco</option>
                     </select>
                 </div>
+                
+                <!-- CAMPO NUEVO: Número de horas (después de Estado) -->
+                <div>
+                    <label class="block mb-2">Número de horas</label>
+                    <input type="number" name="numero_horas" class="w-full p-2 border rounded" step="0.5">
+                </div>
+                
                 <div>
                     <label class="block mb-2">Número de Factura</label>
                     <input type="text" name="numero_factura" class="w-full p-2 border rounded">
@@ -162,7 +182,6 @@
         </div>
 
         <!-- Tabla de Contratos -->
-        <!-- Replace the existing table section with this simplified version -->
         {% if contratos %}
         <div class="glass-effect rounded-xl p-6">
             <h2 class="text-xl font-bold mb-4">Contratos Registrados</h2>
