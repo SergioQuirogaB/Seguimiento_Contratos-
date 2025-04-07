@@ -98,5 +98,30 @@
         "fecha_vencimiento_poliza": "2025-04-07",
         "comentario_poliza": "5555555555",
         "progreso": 10000.000099
+    },
+    {
+        "año": "20244",
+        "empresa": "KONCILIA",
+        "cliente": "AAA",
+        "contrato": "66666666",
+        "valor_pesos": 66666666.0,
+        "valor_dolares": 6666666.0,
+        "descripcion": "66666666",
+        "categoria": "AAA",
+        "valor_mensual": 66666.0,
+        "condiciones": "66666666",
+        "observaciones": "6666666",
+        "fecha_inicio": "2025-04-07",
+        "fecha_vencimiento": "2025-04-07",
+        "valor_facturado": 6666.0,
+        "porcentaje_ejecucion": 100.0,
+        "valor_pendiente": 6666.0,
+        "estado": "100%",
+        "numero_horas": 66.0,
+        "numero_factura": "666666",
+        "numero_poliza": "6666666666",
+        "fecha_vencimiento_poliza": "2025-04-07",
+        "comentario_poliza": "666666666",
+        "progreso": 0.009999000099990002
     }
 ]

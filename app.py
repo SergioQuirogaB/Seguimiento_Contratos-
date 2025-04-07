@@ -66,9 +66,14 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 @login_required
 def index():
+    return render_template('index.html')
+
+@app.route('/registro_contratos', methods=['GET', 'POST'])
+@login_required
+def registro_contratos():
     if request.method == 'POST':
         nuevo_contrato = {
             'año': request.form['año'],
@@ -120,62 +125,13 @@ def index():
         # Redirect to lista_contratos after saving
         return redirect(url_for('lista_contratos'))
     
-    contratos = cargar_contratos()
     clientes = cargar_clientes()
     categorias = cargar_categorias()
     
-    return render_template('index.html',
+    return render_template('registro_contratos.html',
                          empresas=EMPRESAS,
                          clientes=sorted(clientes),
                          categorias=sorted(categorias))
-
-@app.route('/nuevo_contrato', methods=['GET', 'POST'])
-@login_required
-def nuevo_contrato():
-    if request.method == 'POST':
-        # Obtener datos del formulario
-        contrato = {
-            'año': request.form['año'],
-            'empresa': request.form['empresa'],
-            'cliente': request.form['cliente'],
-            'contrato': request.form['contrato'],
-            'valor_pesos': request.form.get('valor_pesos', '0'),
-            'valor_dolares': request.form.get('valor_dolares', '0'),
-            'descripcion': request.form.get('descripcion', ''),
-            'categoria': request.form['categoria'],
-            'valor_mensual': request.form.get('valor_mensual', '0'),
-            'condiciones': request.form.get('condiciones', ''),
-            'observaciones': request.form.get('observaciones', ''),
-            'fecha_inicio': request.form['fecha_inicio'],
-            'fecha_vencimiento': request.form['fecha_vencimiento'],
-            'valor_facturado': request.form.get('valor_facturado', '0'),
-            'porcentaje_ejecucion': request.form.get('porcentaje_ejecucion', '0'),
-            'valor_pendiente': request.form.get('valor_pendiente', '0'),
-            'estado': request.form.get('estado', 'blanco'),
-            'numero_horas': request.form.get('numero_horas', '0'),
-            'numero_factura': request.form.get('numero_factura', ''),
-            'numero_poliza': request.form.get('numero_poliza', ''),
-            'fecha_vencimiento_poliza': request.form.get('fecha_vencimiento_poliza', ''),
-            'comentario_poliza': request.form.get('comentario_poliza', '')
-        }
-        
-        # Guardar el nuevo contrato
-        contratos = cargar_contratos()
-        contratos.append(contrato)
-        guardar_datos(contratos, 'contratos.json')
-        
-        flash('Contrato guardado exitosamente')
-        return redirect(url_for('lista_contratos'))
-    
-    # Cargar datos para el formulario
-    empresas = cargar_empresas()
-    clientes = cargar_clientes()
-    categorias = cargar_categorias()
-    
-    return render_template('nuevo_contrato.html',
-                         empresas=empresas,
-                         clientes=clientes,
-                         categorias=categorias)
 
 @app.route('/lista_contratos')
 @login_required

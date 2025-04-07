@@ -1,192 +1,50 @@
 {% extends "base.html" %}
 
-{% block title %}Registro de Contratos{% endblock %}
+{% block title %}Inicio - Seguimiento de Contratos{% endblock %}
 
 {% block content %}
-<div class="glass-effect rounded-xl p-6">
-    <h1 class="text-2xl font-bold mb-6">Registro de Contratos</h1>
-    
-    <form method="POST" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <!-- Año y Empresa -->
-        <div>
-            <label class="block mb-2">Año</label>
-            <input type="number" name="año" class="w-full p-2 border rounded" required>
-        </div>
-        <div>
-            <label class="block mb-2">Empresa</label>
-            <select name="empresa" class="w-full p-2 border rounded" required>
-                {% for empresa in empresas %}
-                <option value="{{ empresa }}">{{ empresa }}</option>
-                {% endfor %}
-            </select>
+<div class="container mx-auto px-4 py-8">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-gray-800 mb-4">Bienvenido al Sistema de Seguimiento de Contratos</h1>
+        <p class="text-xl text-gray-600">Gestione y monitoree sus contratos de manera eficiente</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Tarjeta 1 -->
+        <div class="glass-effect rounded-xl p-6 hover:shadow-lg transition-shadow">
+            <div class="text-center">
+                <img src="{{ url_for('static', filename='images/contratos.jpg') }}" alt="Gestión de Contratos" class="w-full h-48 object-cover rounded-lg mb-4">
+                <h2 class="text-2xl font-semibold mb-2">Gestión de Contratos</h2>
+                <p class="text-gray-600 mb-4">Registre y administre todos sus contratos en un solo lugar</p>
+                <a href="{{ url_for('registro_contratos') }}" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition-colors">
+                    Registrar Contrato
+                </a>
+            </div>
         </div>
 
-        <!-- Cliente y Contrato -->
-        <div>
-            <label class="block mb-2">Cliente</label>
-            <select id="cliente-select" class="w-full p-2 border rounded" onchange="manejarSeleccionCliente()">
-                <option value="">Seleccione un cliente</option>
-                <option value="nuevo">+ Agregar nuevo cliente</option>
-                {% for cliente in clientes %}
-                <option value="{{ cliente }}">{{ cliente }}</option>
-                {% endfor %}
-            </select>
-            <input type="text" id="nuevo-cliente" class="w-full p-2 border rounded hidden" placeholder="Nuevo cliente">
-            <input type="hidden" name="cliente" id="cliente-hidden" required>
-        </div>
-        <div>
-            <label class="block mb-2">Contrato</label>
-            <input type="text" name="contrato" class="w-full p-2 border rounded" required>
+        <!-- Tarjeta 2 -->
+        <div class="glass-effect rounded-xl p-6 hover:shadow-lg transition-shadow">
+            <div class="text-center">
+                <img src="{{ url_for('static', filename='images/seguimiento.jpg') }}" alt="Seguimiento" class="w-full h-48 object-cover rounded-lg mb-4">
+                <h2 class="text-2xl font-semibold mb-2">Seguimiento</h2>
+                <p class="text-gray-600 mb-4">Monitoree el estado y avance de sus contratos</p>
+                <a href="#" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition-colors">
+                    Ver Seguimiento
+                </a>
+            </div>
         </div>
 
-        <!-- Valores -->
-        <div>
-            <label class="block mb-2">Valor en Pesos</label>
-            <input type="number" name="valor_pesos" class="w-full p-2 border rounded" step="0.01">
+        <!-- Tarjeta 3 -->
+        <div class="glass-effect rounded-xl p-6 hover:shadow-lg transition-shadow">
+            <div class="text-center">
+                <img src="{{ url_for('static', filename='images/reportes.jpg') }}" alt="Reportes" class="w-full h-48 object-cover rounded-lg mb-4">
+                <h2 class="text-2xl font-semibold mb-2">Reportes</h2>
+                <p class="text-gray-600 mb-4">Genere reportes detallados de sus contratos</p>
+                <a href="#" class="bg-purple-600 text-white px-6 py-2 rounded hover:bg-purple-700 transition-colors">
+                    Ver Reportes
+                </a>
+            </div>
         </div>
-        <div>
-            <label class="block mb-2">Valor en Dólares</label>
-            <input type="number" name="valor_dolares" class="w-full p-2 border rounded" step="0.01">
-        </div>
-
-        <!-- Descripción y Categoría -->
-        <div>
-            <label class="block mb-2">Descripción</label>
-            <textarea name="descripcion" class="w-full p-2 border rounded"></textarea>
-        </div>
-        <div>
-            <label class="block mb-2">Categoría</label>
-            <select id="categoria-select" class="w-full p-2 border rounded" onchange="manejarSeleccionCategoria()">
-                <option value="">Seleccione una categoría</option>
-                <option value="nuevo">+ Agregar nueva categoría</option>
-                {% for categoria in categorias %}
-                <option value="{{ categoria }}">{{ categoria }}</option>
-                {% endfor %}
-            </select>
-            <input type="text" id="nueva-categoria" class="w-full p-2 border rounded hidden" placeholder="Nueva categoría">
-            <input type="hidden" name="categoria" id="categoria-hidden" required>
-        </div>
-
-        <!-- Valor mensual y Condiciones -->
-        <div>
-            <label class="block mb-2">Valor Mensual</label>
-            <input type="number" name="valor_mensual" class="w-full p-2 border rounded" step="0.01">
-        </div>
-        <div>
-            <label class="block mb-2">Condiciones</label>
-            <textarea name="condiciones" class="w-full p-2 border rounded"></textarea>
-        </div>
-
-        <!-- Observaciones -->
-        <div>
-            <label class="block mb-2">Observaciones</label>
-            <textarea name="observaciones" class="w-full p-2 border rounded"></textarea>
-        </div>
-
-        <!-- Fechas -->
-        <div>
-            <label class="block mb-2">Fecha de Inicio</label>
-            <input type="date" name="fecha_inicio" class="w-full p-2 border rounded" required>
-        </div>
-        <div>
-            <label class="block mb-2">Fecha de Vencimiento</label>
-            <input type="date" name="fecha_vencimiento" class="w-full p-2 border rounded" required>
-        </div>
-
-        <!-- Valores de facturación -->
-        <div>
-            <label class="block mb-2">Valor Facturado</label>
-            <input type="number" name="valor_facturado" class="w-full p-2 border rounded" step="0.01">
-        </div>
-        
-        <div>
-            <label class="block mb-2">% de ejecución según la facturación</label>
-            <input type="number" name="porcentaje_ejecucion" class="w-full p-2 border rounded" step="0.01" min="0" max="100">
-        </div>
-        
-        <div>
-            <label class="block mb-2">Valor Pendiente</label>
-            <input type="number" name="valor_pendiente" class="w-full p-2 border rounded" step="0.01">
-        </div>
-
-        <!-- Estado y Número de Factura -->
-        <div>
-            <label class="block mb-2">Estado</label>
-            <select name="estado" class="w-full p-2 border rounded">
-                <option value="100%">100%</option>
-                <option value="progreso">En Progreso</option>
-                <option value="blanco">En Blanco</option>
-            </select>
-        </div>
-        
-        <div>
-            <label class="block mb-2">Número de horas</label>
-            <input type="number" name="numero_horas" class="w-full p-2 border rounded" step="0.5">
-        </div>
-        
-        <div>
-            <label class="block mb-2">Número de Factura</label>
-            <input type="text" name="numero_factura" class="w-full p-2 border rounded">
-        </div>
-
-        <!-- Información de Póliza -->
-        <div>
-            <label class="block mb-2">Número de Póliza</label>
-            <input type="text" name="numero_poliza" class="w-full p-2 border rounded">
-        </div>
-        <div>
-            <label class="block mb-2">Fecha Vencimiento Póliza</label>
-            <input type="date" name="fecha_vencimiento_poliza" class="w-full p-2 border rounded">
-        </div>
-        <div>
-            <label class="block mb-2">Comentario Póliza</label>
-            <textarea name="comentario_poliza" class="w-full p-2 border rounded"></textarea>
-        </div>
-
-        <!-- Botón de envío -->
-        <div class="col-span-full">
-            <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">
-                Guardar Contrato
-            </button>
-        </div>
-    </form>
+    </div>
 </div>
-
-<script>
-    function manejarSeleccionCliente() {
-        const select = document.getElementById('cliente-select');
-        const nuevoInput = document.getElementById('nuevo-cliente');
-        const hidden = document.getElementById('cliente-hidden');
-
-        if (select.value === 'nuevo') {
-            select.classList.add('hidden');
-            nuevoInput.classList.remove('hidden');
-            nuevoInput.focus();
-            
-            nuevoInput.oninput = function() {
-                hidden.value = this.value.toUpperCase();
-            }
-        } else {
-            hidden.value = select.value;
-        }
-    }
-
-    function manejarSeleccionCategoria() {
-        const select = document.getElementById('categoria-select');
-        const nuevoInput = document.getElementById('nueva-categoria');
-        const hidden = document.getElementById('categoria-hidden');
-
-        if (select.value === 'nuevo') {
-            select.classList.add('hidden');
-            nuevoInput.classList.remove('hidden');
-            nuevoInput.focus();
-            
-            nuevoInput.oninput = function() {
-                hidden.value = this.value.toUpperCase();
-            }
-        } else {
-            hidden.value = select.value;
-        }
-    }
-</script>
 {% endblock %}  
