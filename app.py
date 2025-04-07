@@ -53,9 +53,10 @@ def login():
         if user:
             session['logged_in'] = True
             session['username'] = username
+            session['rol'] = user.get('rol', 'user')  # Usar 'user' como valor por defecto si no hay rol
             return redirect(url_for('index'))
         else:
-            flash('Invalid credentials')
+            flash('Credenciales inválidas')
     
     return render_template('login.html')
 
@@ -68,10 +69,6 @@ def logout():
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
-    clientes = cargar_clientes()
-    categorias = cargar_categorias()
-    contratos = cargar_contratos()
-    
     if request.method == 'POST':
         nuevo_contrato = {
             'año': request.form['año'],
@@ -104,26 +101,81 @@ def index():
         else:
             nuevo_contrato['progreso'] = 0
 
+        contratos = cargar_contratos()
         contratos.append(nuevo_contrato)
         guardar_datos(contratos, 'contratos.json')
-
+        
         # Save new client if needed
+        clientes = cargar_clientes()
         if request.form['cliente'] not in clientes:
             clientes.append(request.form['cliente'])
             guardar_datos(sorted(list(set(clientes))), 'clientes.json')
 
         # Save new category if needed
+        categorias = cargar_categorias()
         if request.form['categoria'] not in categorias:
             categorias.append(request.form['categoria'])
             guardar_datos(sorted(list(set(categorias))), 'categorias.json')
 
         # Redirect to lista_contratos after saving
         return redirect(url_for('lista_contratos'))
-
+    
+    contratos = cargar_contratos()
+    clientes = cargar_clientes()
+    categorias = cargar_categorias()
+    
     return render_template('index.html',
                          empresas=EMPRESAS,
                          clientes=sorted(clientes),
                          categorias=sorted(categorias))
+
+@app.route('/nuevo_contrato', methods=['GET', 'POST'])
+@login_required
+def nuevo_contrato():
+    if request.method == 'POST':
+        # Obtener datos del formulario
+        contrato = {
+            'año': request.form['año'],
+            'empresa': request.form['empresa'],
+            'cliente': request.form['cliente'],
+            'contrato': request.form['contrato'],
+            'valor_pesos': request.form.get('valor_pesos', '0'),
+            'valor_dolares': request.form.get('valor_dolares', '0'),
+            'descripcion': request.form.get('descripcion', ''),
+            'categoria': request.form['categoria'],
+            'valor_mensual': request.form.get('valor_mensual', '0'),
+            'condiciones': request.form.get('condiciones', ''),
+            'observaciones': request.form.get('observaciones', ''),
+            'fecha_inicio': request.form['fecha_inicio'],
+            'fecha_vencimiento': request.form['fecha_vencimiento'],
+            'valor_facturado': request.form.get('valor_facturado', '0'),
+            'porcentaje_ejecucion': request.form.get('porcentaje_ejecucion', '0'),
+            'valor_pendiente': request.form.get('valor_pendiente', '0'),
+            'estado': request.form.get('estado', 'blanco'),
+            'numero_horas': request.form.get('numero_horas', '0'),
+            'numero_factura': request.form.get('numero_factura', ''),
+            'numero_poliza': request.form.get('numero_poliza', ''),
+            'fecha_vencimiento_poliza': request.form.get('fecha_vencimiento_poliza', ''),
+            'comentario_poliza': request.form.get('comentario_poliza', '')
+        }
+        
+        # Guardar el nuevo contrato
+        contratos = cargar_contratos()
+        contratos.append(contrato)
+        guardar_datos(contratos, 'contratos.json')
+        
+        flash('Contrato guardado exitosamente')
+        return redirect(url_for('lista_contratos'))
+    
+    # Cargar datos para el formulario
+    empresas = cargar_empresas()
+    clientes = cargar_clientes()
+    categorias = cargar_categorias()
+    
+    return render_template('nuevo_contrato.html',
+                         empresas=empresas,
+                         clientes=clientes,
+                         categorias=categorias)
 
 @app.route('/lista_contratos')
 @login_required
@@ -193,6 +245,64 @@ def editar_contrato(id):
 def estadisticas():
     contratos = cargar_contratos()
     return render_template('estadisticas.html', contratos=contratos)
+
+@app.route('/exportar_contratos')
+@login_required
+def exportar_contratos():
+    contratos = cargar_contratos()
+    return jsonify(contratos)
+
+@app.route('/administracion')
+@login_required
+def administracion():
+    if session.get('rol') != 'admin':
+        flash('No tienes permisos para acceder a esta sección')
+        return redirect(url_for('index'))
+    
+    usuarios = cargar_usuarios()
+    # Asegurarse de que todos los usuarios tengan un rol
+    for usuario in usuarios:
+        if 'rol' not in usuario:
+            usuario['rol'] = 'user'
+    
+    return render_template('administracion.html', usuarios=usuarios)
+
+@app.route('/contratos_proximos')
+@login_required
+def contratos_proximos():
+    contratos = cargar_contratos()
+    hoy = datetime.now().date()
+    
+    # Filtrar contratos próximos a vencer
+    contratos_30_dias = []
+    contratos_60_dias = []
+    contratos_vencidos = []
+    
+    for idx, contrato in enumerate(contratos):
+        if not contrato.get('fecha_vencimiento'):
+            continue
+            
+        fecha_vencimiento = datetime.strptime(contrato['fecha_vencimiento'], '%Y-%m-%d').date()
+        dias_restantes = (fecha_vencimiento - hoy).days
+        
+        # Agregar el ID al contrato
+        contrato_con_id = contrato.copy()
+        contrato_con_id['id'] = idx
+        
+        if dias_restantes < 0:
+            contrato_con_id['dias_retraso'] = abs(dias_restantes)
+            contratos_vencidos.append(contrato_con_id)
+        elif dias_restantes <= 30:
+            contrato_con_id['dias_restantes'] = dias_restantes
+            contratos_30_dias.append(contrato_con_id)
+        elif dias_restantes <= 60:
+            contrato_con_id['dias_restantes'] = dias_restantes
+            contratos_60_dias.append(contrato_con_id)
+    
+    return render_template('contratos_proximos.html',
+                         contratos_30_dias=contratos_30_dias,
+                         contratos_60_dias=contratos_60_dias,
+                         contratos_vencidos=contratos_vencidos)
 
 if __name__ == '__main__':
     app.run(debug=True)

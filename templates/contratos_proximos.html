@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Contratos Próximos a Vencer{% endblock %}
+
+{% block content %}
+<div class="glass-effect rounded-xl p-6">
+    <h1 class="text-2xl font-bold mb-6">Contratos Próximos a Vencer</h1>
+    
+    <div class="mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-blue-100 p-4 rounded-lg">
+                <h3 class="text-lg font-semibold text-blue-900">Próximos 30 días</h3>
+                <p class="text-2xl font-bold text-blue-900">{{ contratos_30_dias|length }}</p>
+            </div>
+            <div class="bg-yellow-100 p-4 rounded-lg">
+                <h3 class="text-lg font-semibold text-yellow-900">Próximos 60 días</h3>
+                <p class="text-2xl font-bold text-yellow-900">{{ contratos_60_dias|length }}</p>
+            </div>
+            <div class="bg-red-100 p-4 rounded-lg">
+                <h3 class="text-lg font-semibold text-red-900">Vencidos</h3>
+                <p class="text-2xl font-bold text-red-900">{{ contratos_vencidos|length }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contratos próximos a vencer en 30 días -->
+    <div class="mb-8">
+        <h2 class="text-xl font-semibold mb-4 text-blue-900">Próximos 30 días</h2>
+        {% if contratos_30_dias %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="p-2">Contrato</th>
+                        <th class="p-2">Cliente</th>
+                        <th class="p-2">Fecha de Vencimiento</th>
+                        <th class="p-2">Días Restantes</th>
+                        <th class="p-2">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contrato in contratos_30_dias %}
+                    <tr class="border-b">
+                        <td class="p-2 text-center">{{ contrato.contrato }}</td>
+                        <td class="p-2 text-center">{{ contrato.cliente }}</td>
+                        <td class="p-2 text-center">{{ contrato.fecha_vencimiento }}</td>
+                        <td class="p-2 text-center">
+                            <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
+                                {{ contrato.dias_restantes }} días
+                            </span>
+                        </td>
+                        <td class="p-2 text-center">
+                            <a href="{{ url_for('ver_contrato', id=contrato.id) }}" 
+                               class="text-blue-600 hover:text-blue-800">
+                                Ver detalles
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-gray-500">No hay contratos próximos a vencer en los próximos 30 días.</p>
+        {% endif %}
+    </div>
+
+    <!-- Contratos próximos a vencer en 60 días -->
+    <div class="mb-8">
+        <h2 class="text-xl font-semibold mb-4 text-yellow-900">Próximos 60 días</h2>
+        {% if contratos_60_dias %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="p-2">Contrato</th>
+                        <th class="p-2">Cliente</th>
+                        <th class="p-2">Fecha de Vencimiento</th>
+                        <th class="p-2">Días Restantes</th>
+                        <th class="p-2">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contrato in contratos_60_dias %}
+                    <tr class="border-b">
+                        <td class="p-2 text-center">{{ contrato.contrato }}</td>
+                        <td class="p-2 text-center">{{ contrato.cliente }}</td>
+                        <td class="p-2 text-center">{{ contrato.fecha_vencimiento }}</td>
+                        <td class="p-2 text-center">
+                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">
+                                {{ contrato.dias_restantes }} días
+                            </span>
+                        </td>
+                        <td class="p-2 text-center">
+                            <a href="{{ url_for('ver_contrato', id=contrato.id) }}" 
+                               class="text-blue-600 hover:text-blue-800">
+                                Ver detalles
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-gray-500">No hay contratos próximos a vencer en los próximos 60 días.</p>
+        {% endif %}
+    </div>
+
+    <!-- Contratos vencidos -->
+    <div>
+        <h2 class="text-xl font-semibold mb-4 text-red-900">Contratos Vencidos</h2>
+        {% if contratos_vencidos %}
+        <div class="overflow-x-auto">
+            <table class="min-w-full">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="p-2">Contrato</th>
+                        <th class="p-2">Cliente</th>
+                        <th class="p-2">Fecha de Vencimiento</th>
+                        <th class="p-2">Días de Retraso</th>
+                        <th class="p-2">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contrato in contratos_vencidos %}
+                    <tr class="border-b">
+                        <td class="p-2 text-center">{{ contrato.contrato }}</td>
+                        <td class="p-2 text-center">{{ contrato.cliente }}</td>
+                        <td class="p-2 text-center">{{ contrato.fecha_vencimiento }}</td>
+                        <td class="p-2 text-center">
+                            <span class="px-2 py-1 bg-red-100 text-red-800 rounded-full">
+                                {{ contrato.dias_retraso }} días
+                            </span>
+                        </td>
+                        <td class="p-2 text-center">
+                            <a href="{{ url_for('ver_contrato', id=contrato.id) }}" 
+                               class="text-blue-600 hover:text-blue-800">
+                                Ver detalles
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-gray-500">No hay contratos vencidos.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

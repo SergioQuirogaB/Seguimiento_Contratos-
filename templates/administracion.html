@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+{% block title %}Administración{% endblock %}
+
+{% block content %}
+<div class="glass-effect rounded-xl p-6">
+    <h1 class="text-2xl font-bold mb-6">Administración</h1>
+    
+    <!-- Tabs -->
+    <div class="mb-6">
+        <div class="border-b border-gray-200">
+            <ul class="flex flex-wrap -mb-px" id="adminTabs">
+                <li class="mr-2">
+                    <button class="inline-block p-4 border-b-2 border-blue-600 text-blue-600 active" 
+                            onclick="showTab('usuarios')">Usuarios</button>
+                </li>
+                <li class="mr-2">
+                    <button class="inline-block p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300" 
+                            onclick="showTab('cambiar-clave')">Cambiar Contraseña</button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Contenido de Tabs -->
+    <div id="usuariosTab" class="tab-content">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold">Gestión de Usuarios</h2>
+            <button onclick="mostrarModalAgregarUsuario()" class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-cyan-500 transition-colors duration-200">
+                Agregar Usuario
+            </button>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="p-2">Usuario</th>
+                        <th class="p-2">Rol</th>
+                        <th class="p-2">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for usuario in usuarios %}
+                    <tr class="border-b">
+                        <td class="p-2">{{ usuario.username }}</td>
+                        <td class="p-2">{{ usuario.rol }}</td>
+                        <td class="p-2">
+                            <button onclick="mostrarModalCambiarClave('{{ usuario.username }}')" 
+                                    class="text-blue-600 hover:text-blue-800 mr-2">
+                                Cambiar Clave
+                            </button>
+                            <button onclick="eliminarUsuario('{{ usuario.username }}')" 
+                                    class="text-red-600 hover:text-red-800">
+                                Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="cambiarClaveTab" class="tab-content hidden">
+        <h2 class="text-xl font-semibold mb-4">Cambiar Contraseña</h2>
+        <form id="formCambiarClave" class="max-w-md">
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2">Contraseña Actual</label>
+                <input type="password" name="clave_actual" required
+                       class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2">Nueva Contraseña</label>
+                <input type="password" name="nueva_clave" required
+                       class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2">Confirmar Nueva Contraseña</label>
+                <input type="password" name="confirmar_clave" required
+                       class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+            </div>
+            <button type="submit" class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-cyan-500 transition-colors duration-200">
+                Cambiar Contraseña
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Agregar Usuario -->
+<div id="modalAgregarUsuario" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full">
+        <h3 class="text-xl font-semibold mb-4">Agregar Nuevo Usuario</h3>
+        <form id="formAgregarUsuario">
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2">Nombre de Usuario</label>
+                <input type="text" name="username" required
+                       class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2">Contraseña</label>
+                <input type="password" name="password" required
+                       class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2">Rol</label>
+                <select name="rol" required
+                        class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+                    <option value="admin">Administrador</option>
+                    <option value="user">Usuario</option>
+                </select>
+            </div>
+            <div class="flex justify-end space-x-2">
+                <button type="button" onclick="cerrarModal('modalAgregarUsuario')"
+                        class="px-4 py-2 border rounded-lg hover:bg-gray-100">
+                    Cancelar
+                </button>
+                <button type="submit"
+                        class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-cyan-500">
+                    Agregar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Cambiar Clave -->
+<div id="modalCambiarClave" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+    <div class="bg-white rounded-lg p-6 max-w-md w-full">
+        <h3 class="text-xl font-semibold mb-4">Cambiar Contraseña de Usuario</h3>
+        <form id="formCambiarClaveUsuario">
+            <input type="hidden" name="username" id="usernameCambiarClave">
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2">Nueva Contraseña</label>
+                <input type="password" name="nueva_clave" required
+                       class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 mb-2">Confirmar Nueva Contraseña</label>
+                <input type="password" name="confirmar_clave" required
+                       class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+            </div>
+            <div class="flex justify-end space-x-2">
+                <button type="button" onclick="cerrarModal('modalCambiarClave')"
+                        class="px-4 py-2 border rounded-lg hover:bg-gray-100">
+                    Cancelar
+                </button>
+                <button type="submit"
+                        class="bg-blue-900 text-white px-4 py-2 rounded hover:bg-cyan-500">
+                    Cambiar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function showTab(tabName) {
+    // Ocultar todos los tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+    });
+    
+    // Mostrar el tab seleccionado
+    document.getElementById(tabName + 'Tab').classList.remove('hidden');
+    
+    // Actualizar estilos de los botones
+    document.querySelectorAll('#adminTabs button').forEach(button => {
+        button.classList.remove('border-blue-600', 'text-blue-600');
+        button.classList.add('border-transparent');
+    });
+    
+    // Estilizar el botón activo
+    event.target.classList.add('border-blue-600', 'text-blue-600');
+    event.target.classList.remove('border-transparent');
+}
+
+function mostrarModalAgregarUsuario() {
+    document.getElementById('modalAgregarUsuario').classList.remove('hidden');
+    document.getElementById('modalAgregarUsuario').classList.add('flex');
+}
+
+function mostrarModalCambiarClave(username) {
+    document.getElementById('usernameCambiarClave').value = username;
+    document.getElementById('modalCambiarClave').classList.remove('hidden');
+    document.getElementById('modalCambiarClave').classList.add('flex');
+}
+
+function cerrarModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+    document.getElementById(modalId).classList.remove('flex');
+}
+
+function eliminarUsuario(username) {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Esta acción no se puede deshacer",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/eliminar_usuario/${username}`, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('¡Eliminado!', 'El usuario ha sido eliminado.', 'success')
+                        .then(() => window.location.reload());
+                } else {
+                    Swal.fire('Error', data.message, 'error');
+                }
+            });
+        }
+    });
+}
+
+document.getElementById('formAgregarUsuario').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    fetch('/agregar_usuario', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire('¡Éxito!', 'Usuario agregado correctamente.', 'success')
+                .then(() => window.location.reload());
+        } else {
+            Swal.fire('Error', data.message, 'error');
+        }
+    });
+});
+
+document.getElementById('formCambiarClave').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    fetch('/cambiar_clave', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire('¡Éxito!', 'Contraseña cambiada correctamente.', 'success');
+        } else {
+            Swal.fire('Error', data.message, 'error');
+        }
+    });
+});
+
+document.getElementById('formCambiarClaveUsuario').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    
+    fetch('/cambiar_clave_usuario', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            Swal.fire('¡Éxito!', 'Contraseña cambiada correctamente.', 'success')
+                .then(() => {
+                    cerrarModal('modalCambiarClave');
+                });
+        } else {
+            Swal.fire('Error', data.message, 'error');
+        }
+    });
+});
+</script>
+{% endblock %} 
