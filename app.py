@@ -84,14 +84,14 @@ def index():
             'categoria': request.form['categoria'],
             'valor_mensual': float(request.form['valor_mensual'] or 0),
             'condiciones': request.form['condiciones'],
-            'observaciones': request.form['observaciones'],  # New field
+            'observaciones': request.form['observaciones'],
             'fecha_inicio': request.form['fecha_inicio'],
             'fecha_vencimiento': request.form['fecha_vencimiento'],
             'valor_facturado': float(request.form['valor_facturado'] or 0),
-            'porcentaje_ejecucion': float(request.form['porcentaje_ejecucion'] or 0),  # New field
+            'porcentaje_ejecucion': float(request.form['porcentaje_ejecucion'] or 0),
             'valor_pendiente': float(request.form['valor_pendiente'] or 0),
             'estado': request.form['estado'],
-            'numero_horas': float(request.form['numero_horas'] or 0),  # New field
+            'numero_horas': float(request.form['numero_horas'] or 0),
             'numero_factura': request.form['numero_factura'],
             'numero_poliza': request.form['numero_poliza'],
             'fecha_vencimiento_poliza': request.form['fecha_vencimiento_poliza'],
@@ -117,14 +117,19 @@ def index():
             categorias.append(request.form['categoria'])
             guardar_datos(sorted(list(set(categorias))), 'categorias.json')
 
-        # Redirect to ver_contrato with the index of the newly added contract
-        return redirect(url_for('ver_contrato', id=len(contratos)-1))
+        # Redirect to lista_contratos after saving
+        return redirect(url_for('lista_contratos'))
 
     return render_template('index.html',
                          empresas=EMPRESAS,
                          clientes=sorted(clientes),
-                         categorias=sorted(categorias),
-                         contratos=contratos)
+                         categorias=sorted(categorias))
+
+@app.route('/lista_contratos')
+@login_required
+def lista_contratos():
+    contratos = cargar_contratos()
+    return render_template('lista_contratos.html', contratos=contratos)
 
 @app.route('/eliminar_contrato/<int:id>')
 @login_required
@@ -159,14 +164,14 @@ def editar_contrato(id):
             'categoria': request.form['categoria'],
             'valor_mensual': float(request.form['valor_mensual'] or 0),
             'condiciones': request.form['condiciones'],
-            'observaciones': request.form['observaciones'],  # New field
+            'observaciones': request.form['observaciones'],
             'fecha_inicio': request.form['fecha_inicio'],
             'fecha_vencimiento': request.form['fecha_vencimiento'],
             'valor_facturado': float(request.form['valor_facturado'] or 0),
-            'porcentaje_ejecucion': float(request.form['porcentaje_ejecucion'] or 0),  # New field
+            'porcentaje_ejecucion': float(request.form['porcentaje_ejecucion'] or 0),
             'valor_pendiente': float(request.form['valor_pendiente'] or 0),
             'estado': request.form['estado'],
-            'numero_horas': float(request.form['numero_horas'] or 0),  # New field
+            'numero_horas': float(request.form['numero_horas'] or 0),
             'numero_factura': request.form['numero_factura'],
             'numero_poliza': request.form['numero_poliza'],
             'fecha_vencimiento_poliza': request.form['fecha_vencimiento_poliza'],
@@ -182,6 +187,12 @@ def editar_contrato(id):
         guardar_datos(contratos, 'contratos.json')
         
     return redirect(url_for('ver_contrato', id=id))
+
+@app.route('/estadisticas')
+@login_required
+def estadisticas():
+    contratos = cargar_contratos()
+    return render_template('estadisticas.html', contratos=contratos)
 
 if __name__ == '__main__':
     app.run(debug=True)

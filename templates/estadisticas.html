@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Estadísticas de Contratos{% endblock %}
+
+{% block header %}Estadísticas de Contratos{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-[calc(100vh-8rem)]">
+    <!-- Gráfico de Contratos por Empresa -->
+    <div class="glass-effect rounded-xl p-6 flex flex-col">
+        <h3 class="text-lg font-semibold mb-4">Contratos por Empresa</h3>
+        <div class="flex-1">
+            <canvas id="empresasChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Gráfico de Valor Total por Categoría -->
+    <div class="glass-effect rounded-xl p-6 flex flex-col">
+        <h3 class="text-lg font-semibold mb-4">Valor Total por Categoría</h3>
+        <div class="flex-1">
+            <canvas id="categoriasChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Gráfico de Progreso de Contratos -->
+    <div class="glass-effect rounded-xl p-6 flex flex-col">
+        <h3 class="text-lg font-semibold mb-4">Estado de los Contratos</h3>
+        <div class="flex-1">
+            <canvas id="estadoChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Gráfico de Valor Mensual por Mes -->
+    <div class="glass-effect rounded-xl p-6 flex flex-col">
+        <h3 class="text-lg font-semibold mb-4">Valor Mensual por Mes</h3>
+        <div class="flex-1">
+            <canvas id="mensualChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Datos para los gráficos
+    const contratos = {{ contratos|tojson }};
+    
+    // Gráfico de Contratos por Empresa
+    const empresasData = {};
+    contratos.forEach(contrato => {
+        empresasData[contrato.empresa] = (empresasData[contrato.empresa] || 0) + 1;
+    });
+
+    new Chart(document.getElementById('empresasChart'), {
+        type: 'pie',
+        data: {
+            labels: Object.keys(empresasData),
+            datasets: [{
+                data: Object.values(empresasData),
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 99, 132, 0.8)',
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Gráfico de Valor por Categoría
+    const categoriasData = {};
+    contratos.forEach(contrato => {
+        categoriasData[contrato.categoria] = (categoriasData[contrato.categoria] || 0) + contrato.valor_pesos;
+    });
+
+    new Chart(document.getElementById('categoriasChart'), {
+        type: 'bar',
+        data: {
+            labels: Object.keys(categoriasData),
+            datasets: [{
+                label: 'Valor Total en Pesos',
+                data: Object.values(categoriasData),
+                backgroundColor: 'rgba(75, 192, 192, 0.8)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Gráfico de Estado de Contratos
+    const estadoData = {
+        '100%': 0,
+        'En Progreso': 0,
+        'En Blanco': 0
+    };
+    contratos.forEach(contrato => {
+        estadoData[contrato.estado === '100%' ? '100%' : contrato.estado === 'progreso' ? 'En Progreso' : 'En Blanco']++;
+    });
+
+    new Chart(document.getElementById('estadoChart'), {
+        type: 'doughnut',
+        data: {
+            labels: Object.keys(estadoData),
+            datasets: [{
+                data: Object.values(estadoData),
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.8)',
+                    'rgba(255, 206, 86, 0.8)',
+                    'rgba(255, 99, 132, 0.8)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // Gráfico de Valor Mensual por Mes
+    const mensualData = {};
+    contratos.forEach(contrato => {
+        if (contrato.valor_mensual > 0) {
+            const mes = new Date(contrato.fecha_inicio).toLocaleString('es', { month: 'long' });
+            mensualData[mes] = (mensualData[mes] || 0) + contrato.valor_mensual;
+        }
+    });
+
+    new Chart(document.getElementById('mensualChart'), {
+        type: 'line',
+        data: {
+            labels: Object.keys(mensualData),
+            datasets: [{
+                label: 'Valor Mensual',
+                data: Object.values(mensualData),
+                borderColor: 'rgba(153, 102, 255, 0.8)',
+                tension: 0.1,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %} 
